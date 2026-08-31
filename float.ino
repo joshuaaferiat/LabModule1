@@ -23,9 +23,11 @@ void loop() {
 
   // print a single labeled value so Serial Plotter can graph it
   Serial.print("ADC:");
+  Serial.println(sensorValue);
 
   float voltage = sensorValue * (5.00/1024.0);
 
+  Serial.print("Voltage:");
   Serial.println(voltage);
 
   delay(80);  // delay in between reads for stability
