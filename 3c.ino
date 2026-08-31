@@ -11,7 +11,7 @@ void loop() {
     Serial.print(i);
     Serial.print(" Voltage_V:");
     Serial.println(voltage, 4);
-    delay(2);
+    delay(100);  // ~100 ms per reading => 100 readings in about 10 s
   }
 
   // ---------- BLOCK 2: 100 sequential averaged readings ----------
@@ -26,7 +26,7 @@ void loop() {
     Serial.print(i);
     Serial.print(" Voltage_V:");
     Serial.println(voltage, 4);
-    delay(2);
+    delay(100);  // keep each 100-point block spread across about 10 s
   }
 
   // The Arduino loop() function repeats automatically, so the sequence starts again.
