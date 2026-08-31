@@ -7,7 +7,7 @@ void loop() {
   int raw = analogRead(A0);
   float voltage = raw * (5.00 / 1024.0);
   Serial.print("Immediate_V:");
-  Serial.println(voltage, 4);
+  Serial.println(voltage, 2);
 
   // Average of 100 readings from A0
   long sum = 0;
@@ -17,7 +17,7 @@ void loop() {
   float avgRaw = sum / 100.0;
   float avgVoltage = avgRaw * (5.00 / 1024.0);
   Serial.print("Average_100_V:");
-  Serial.println(avgVoltage, 4);
+  Serial.println(avgVoltage, 2);
 
-  delay(1000);
+  delay(100);
 }
