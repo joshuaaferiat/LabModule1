@@ -1,4 +1,26 @@
 /*
+  m01_pwm_from_pot.ino
+  Module 1 -- Part 4  (PRINCIPAL SKETCH for the PWM measurements)
+  Averaged pot voltage -> map to 0-255 -> analogWrite() on pin 9 -> LED brightness.
+
+  Team:      TEC 8
+  Board:     Arduino Uno, USB powered.  TEC POWER SUPPLY OFF for all of Module 1.
+  Wiring:    Pot wiper to A0, outer terminals to 5V and GND.
+             Pin 9 -> 220-1000 Ohm resistor -> LED anode; LED cathode -> GND.
+             Oscilloscope probe on pin 9, probe ground on Arduino GND.
+  Baud:      9600
+  Output:    tab-separated Ave_Voltage(V) / PWM_Value / Duty_Cycle(%) for Serial Monitor.
+  Produces:  data/module_01/m01_pwm_serial_YYYYMMDD.txt + scope readings in
+             data/module_01/m01_scope_measurements.md
+
+  Was:       S2/TR4.ino
+  Version:   v1 (2026-09-09) -- restructured from the flat S2/ folder; logic unchanged
+             except where marked "repo cleanup".
+*/
+
+const char* VERSION = "m01_pwm_from_pot v1";
+
+/*
   Part 4: LED Brightness From Averaged Analog Input
   
   Signal chain:
@@ -35,6 +57,7 @@ float readAveragedVoltage(int pin, int numReadings) {
 
 void setup() {
   Serial.begin(9600);
+  Serial.println(VERSION);   // repo cleanup: proves which build is on the board
   pinMode(LED_PIN, OUTPUT);
   
   Serial.println("=== Part 4: LED Brightness from Averaged Analog Input ===");

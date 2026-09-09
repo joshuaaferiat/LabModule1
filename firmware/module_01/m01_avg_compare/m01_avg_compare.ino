@@ -1,4 +1,23 @@
 /*
+  m01_avg_compare.ino
+  Module 1 -- Part 3C  (PRINCIPAL SKETCH for the averaging table)
+  100 points at N=1000, then 100 points at N=1, repeating forever.
+
+  Team:      TEC 8
+  Board:     Arduino Uno, USB powered.  TEC POWER SUPPLY OFF for all of Module 1.
+  Wiring:    100 kOhm pot held FIXED near midrange: outer terminals to 5V and GND, wiper to A0.
+  Baud:      9600
+  Output:    Ave1000_Point_7 Voltage_V:2.4561   (one plotted field; name stays Voltage_V for both blocks)
+  Produces:  data/module_01/m01_avg_compare_YYYYMMDD.txt -> analysis/module_01/averaging_stats.py
+
+  Was:       S2/3c2.ino
+  Version:   v1 (2026-09-09) -- restructured from the flat S2/ folder; logic unchanged
+             except where marked "repo cleanup".
+*/
+
+const char* VERSION = "m01_avg_compare v1";
+
+/*
   Part 3C-a: Compare One Reading With A 1000-Reading Average
   Prints 100 averaged readings, then 100 single readings.
   Format: Ave1000_Point_1 Voltage_V:2.4561
@@ -7,6 +26,7 @@
 
 void setup() {
   Serial.begin(9600);
+  Serial.println(VERSION);   // repo cleanup: proves which build is on the board
 }
 
 // --- Reads a single ADC conversion and returns voltage ---
