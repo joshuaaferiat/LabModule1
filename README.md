@@ -1,7 +1,7 @@
 # LabModule1 — Temperature Control Instrument
 
 **Course:** Phys 39 — Instrumentation and Thermal Physics
-**Team:** TEC 8
+**Team:** TEC 8 Joshua, Tianren
 **Repository:** `https://github.com/joshuaaferiat/LabModule1`
 
 Semester project: an Arduino-based closed-loop temperature controller built from a thermistor,
