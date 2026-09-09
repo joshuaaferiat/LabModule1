@@ -2,7 +2,7 @@
 
 **Course:** Phys 39 — Instrumentation and Thermal Physics
 **Team:** TEC 8
-**Repository:** `TODO: https://github.com/joshuaaferiat/LabModule1`
+**Repository:** `https://github.com/joshuaaferiat/LabModule1`
 
 Semester project: an Arduino-based closed-loop temperature controller built from a thermistor,
 a thermoelectric cooler (TEC/Peltier), an H-bridge driver, a bench supply and a liquid-cooled
