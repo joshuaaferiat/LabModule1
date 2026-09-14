@@ -368,24 +368,3 @@ be driven in **either direction** through the load, which is essential for a TEC
 reversing the current swaps the hot and cold faces and turns a cooler into a heater. That is the
 mechanism by which the controller this course is building will be able to drive temperature in
 both directions from a single actuator.
-
----
-
-## Before submitting
-
-Five items only the team can supply:
-
-1. Both members' full names, in the header and in the PDF filename
-2. Date
-3. Repository URL
-4. Full 40-character commit hash — export the PDF **after** the final push, so the hash on
-   page 1 is the hash of the pushed checkpoint
-5. Which pin the oscilloscope probe was clipped to (§1)
-
-Then check that every figure renders in the exported PDF, export as
-`A1_Lastname_Lastname.pdf`, and have **both** teammates upload it to the A1 Moodle activity
-before Monday 14 September, 5:00 PM.
-
-Outstanding measurements are listed in
-[`docs/reference/MISSING_ITEMS.md`](../reference/MISSING_ITEMS.md); the averaging block in §4 is
-the one that carries a full rubric line.
