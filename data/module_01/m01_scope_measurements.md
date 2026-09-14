@@ -11,10 +11,10 @@ Date: September 3, 2026
 automatic measurement readout or screenshot export. Values are determined from the
 graticule and control settings:
 
-\[
+\\[
 \text{Period}
 =(\text{divisions per cycle})(\text{TIME/DIV}),
-\]
+\\]
 
 \[
 \text{Frequency}
