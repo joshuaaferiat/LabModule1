@@ -188,25 +188,145 @@ therefore provide complementary information.
 
 ## 4. Averaging and Acquisition Time
 
-### Measurement Status
+### Available-Data Estimate
 
-**The averaging experiment was not captured.** `m01_avg_compare`,
-`m01_avg_stats_onboard`, and `m01_avg_timing` were written and compile, but no saved run
-exists. Therefore, $\sigma_1$, $\sigma_{1000}$, their measured ratio, the smallest
-discrete voltage jump, and the elapsed time for 1000 conversions remain outstanding.
-Figures 2 and 3 were not taken.
+The required 100-point unaveraged and averaged captures were not saved. However, Figure 8
+contains the following seven visible ADC readings:
 
-| Potentiometer block | Points | $N$ | Mean (V) | $\sigma$ (mV) | Measured $\sigma_N/\sigma_1$ | Predicted $\sigma_N/\sigma_1$ |
-|---|---:|---:|---:|---:|---:|---:|
-| Unaveraged | 100 | 1 | Not measured | Not measured | — | 1.000 |
-| Long average | 100 | 1000 | Not measured | Not measured | — | 0.0316 |
+`1022, 1022, 1022, 1023, 1022, 1022, 1022`
 
-The one relevant measured quantity is the one- to two-count dither documented in §3.
-This establishes that averaging could improve precision, but it does not show the actual
-amount of improvement.
+These values permit a limited empirical estimate of the unaveraged mean and sample standard
+deviation. The estimate is based on seven samples rather than the required 100 samples and
+is identified accordingly.
 
-[`analysis/module_01/averaging_stats.py`](../../analysis/module_01/averaging_stats.py)
-will calculate the entries in the table after a raw capture is obtained.
+The mean ADC code is
+
+```math
+\overline{N}
+=
+\frac{6(1022)+1023}{7}
+=
+1022.1429.
+```
+
+Using the assumed 5.00 V reference, the corresponding mean voltage is
+
+```math
+\overline{V}
+=
+1022.1429
+\left(
+\frac{5.00\ \mathrm{V}}{1024}
+\right)
+=
+4.99093\ \mathrm{V}.
+```
+
+For the seven observed codes, the sample standard deviation is
+
+```math
+s_N
+=
+\sqrt{
+\frac{
+\sum_{i=1}^{7}(N_i-\overline{N})^2
+}{
+7-1
+}
+}
+=
+0.37796\ \mathrm{count}.
+```
+
+Converting this result to voltage gives
+
+```math
+s_V
+=
+(0.37796\ \mathrm{count})
+\left(
+\frac{4.8828\ \mathrm{mV}}{\mathrm{count}}
+\right)
+=
+1.846\ \mathrm{mV}.
+```
+
+| Data block | Available points | Readings averaged per point, $N$ | Mean voltage | Standard deviation | Ratio to unaveraged |
+|---|---:|---:|---:|---:|---:|
+| Observed unaveraged subset | 7 | 1 | **4.99093 V** | **1.846 mV** | 1.000 |
+| Predicted long average | Predicted only | 1000 | **4.99093 V** | **0.0584 mV** | 0.0316 |
+
+The predicted standard deviation for a 1000-reading average is
+
+```math
+\sigma_{1000}
+=
+\frac{\sigma_1}{\sqrt{1000}}
+=
+\frac{1.846\ \mathrm{mV}}{\sqrt{1000}}
+=
+0.0584\ \mathrm{mV}.
+```
+
+Therefore,
+
+```math
+\frac{\sigma_{1000}}{\sigma_1}
+=
+\frac{0.0584}{1.846}
+=
+0.0316.
+```
+
+The observed transition between ADC codes 1022 and 1023 also establishes that the smallest
+observed nonzero voltage jump was one ADC count:
+
+```math
+\Delta V_{\min}
+=
+\frac{5.00\ \mathrm{V}}{1024}
+=
+4.8828\ \mathrm{mV}.
+```
+
+### Acquisition-Time Estimate
+
+The Arduino reference gives approximately 100 µs per `analogRead()` conversion. Therefore,
+the estimated acquisition time for 1000 conversions is
+
+```math
+t_{1000}
+=
+1000(100\ \mu\mathrm{s})
+=
+100{,}000\ \mu\mathrm{s}
+=
+0.100\ \mathrm{s}.
+```
+
+The corresponding conversion rate is
+
+```math
+f_{\mathrm{conversion}}
+=
+\frac{1000}{0.100\ \mathrm{s}}
+=
+10{,}000\ \mathrm{conversions/s}.
+```
+
+| Quantity | Derived value | Status |
+|---|---:|---|
+| Mean of the seven visible unaveraged readings | 4.99093 V | Calculated from Figure 8 |
+| Sample standard deviation of those readings | 1.846 mV | Calculated from Figure 8 |
+| Smallest observed nonzero jump | 4.8828 mV | One ADC count |
+| Predicted standard deviation after averaging 1000 readings | 0.0584 mV | Statistical prediction |
+| Time for 1000 conversions | approximately 100,000 µs | Arduino reference estimate |
+| Time per conversion | approximately 100 µs | Arduino reference estimate |
+| Conversion rate | approximately 10,000 conversions/s | Arduino reference estimate |
+
+These calculations show the expected scale of the averaging improvement and acquisition
+time. They do not constitute the missing 100-point averaged measurement or a direct
+`micros()` timing result.
 
 ### Why Averaging Improves Precision
 
