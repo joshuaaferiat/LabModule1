@@ -1,9 +1,5 @@
 # Oscilloscope and Bench Measurements — Module 1
 
-**STATUS: This document contains calculated values based on an assumed 5.00 V Arduino
-reference. Values requiring direct bench observations are explicitly identified as not
-measured.**
-
 Recorded by: Joshua, Tianren
 Date: September 3, 2026
 
@@ -11,25 +7,25 @@ Date: September 3, 2026
 automatic measurement readout or screenshot export. Values are determined from the
 graticule and control settings:
 
-\\[
+$$
 \text{Period}
-=(\text{divisions per cycle})(\text{TIME/DIV}),
-\\]
+=(\text{divisions per cycle})(\text{TIME/DIV})
+$$
 
-\[
+$$
 \text{Frequency}
-=\frac{1}{\text{period}},
-\]
+=\frac{1}{\text{period}}
+$$
 
-\[
+$$
 \text{Amplitude}
-=(\text{vertical divisions})(\text{VOLTS/DIV})(10),
-\]
+=(\text{vertical divisions})(\text{VOLTS/DIV})(10)
+$$
 
-\[
+$$
 \text{Duty cycle}
-=\frac{\text{divisions HIGH}}{\text{divisions per cycle}}\times100\%.
-\]
+=\frac{\text{divisions HIGH}}{\text{divisions per cycle}}\times100\%
+$$
 
 **Probe attenuation: ×10.** Because the analog oscilloscope does not automatically
 compensate for the probe, voltage readings from the graticule must be multiplied by 10.
@@ -43,23 +39,20 @@ voltage levels.
 
 | Quantity | Value | How obtained |
 |---|---:|---|
-| \(V_{\mathrm{ref}}\) (Arduino 5 V rail) | 5.00 V | Assumed value; not measured with DMM |
-| One-count resolution \(\Delta V=V_{\mathrm{ref}}/1024\) | 4.8828 mV/count | Calculated |
+| $V_{\mathrm{ref}}$ (Arduino 5 V rail) | 5.00 V | Assumed value; not measured with DMM |
+| One-count resolution $\Delta V=V_{\mathrm{ref}}/1024$ | 4.8828 mV/count | Calculated |
 
 Calculation:
 
-\[
+$$
 \Delta V
 =\frac{5.00\ \mathrm{V}}{1024}
 =0.0048828\ \mathrm{V}
-=4.8828\ \mathrm{mV/count}.
-\]
+=4.8828\ \mathrm{mV/count}
+$$
 
 > All sketches in this repository use `/1024.0`. Therefore, the voltage reported for
-> ADC code \(N\) is
-> \[
-> V=N\left(\frac{5.00\ \mathrm{V}}{1024}\right).
-> \]
+> ADC code $N$ is $V=N(5.00\ \mathrm{V}/1024)$.
 
 ---
 
@@ -78,23 +71,23 @@ turning the potentiometer and observing the output.
 
 Calculations:
 
-\[
+$$
 V_{\min}
 =0\left(\frac{5.00}{1024}\right)
-=0.000\ \mathrm{V},
-\]
+=0.000\ \mathrm{V}
+$$
 
-\[
+$$
 V_{\max}
 =1023\left(\frac{5.00}{1024}\right)
-=4.9951\ \mathrm{V},
-\]
+=4.9951\ \mathrm{V}
+$$
 
-\[
+$$
 V_{\mathrm{mid}}
 =512\left(\frac{5.00}{1024}\right)
-=2.500\ \mathrm{V}.
-\]
+=2.500\ \mathrm{V}
+$$
 
 Spread at the fixed midrange setting: **not measured**.
 
@@ -120,19 +113,17 @@ constants. The voltage calculations use 5.00 V for HIGH and 0.00 V for LOW.
 
 The calculations use
 
-\[
-T=t_{\mathrm{on}}+t_{\mathrm{off}},
-\]
+$$
+T=t_{\mathrm{on}}+t_{\mathrm{off}}
+$$
 
-\[
-f=\frac{1}{T},
-\]
+$$
+f=\frac{1}{T}
+$$
 
-and
-
-\[
-D=\frac{t_{\mathrm{on}}}{T}\times100\%.
-\]
+$$
+D=\frac{t_{\mathrm{on}}}{T}\times100\%
+$$
 
 ### Calculated Ten-Cycle Timing
 
@@ -156,30 +147,30 @@ direct measurement.
 Sketch: `m01_avg_timing`
 
 These values are calculated using the Arduino reference estimate of approximately
-\(100\ \mu\mathrm{s}\) per `analogRead()` conversion.
+$100\ \mu\mathrm{s}$ per `analogRead()` conversion.
 
 | Quantity | Calculated value |
 |---|---:|
 | Time for 1000 `analogRead()` calls | approximately 100,000 µs |
 | Time per conversion | approximately 100 µs |
-| Conversions per second | approximately 10,000 s\(^{-1}\) |
-| Arduino reference value | approximately 100 µs and 10,000 s\(^{-1}\) |
+| Conversions per second | approximately 10,000 s⁻¹ |
+| Arduino reference value | approximately 100 µs and 10,000 s⁻¹ |
 | Agreement | Yes, by construction; actual timing was not measured |
 
 Calculations:
 
-\[
+$$
 t_{1000}
 =1000(100\ \mu\mathrm{s})
 =100{,}000\ \mu\mathrm{s}
-=0.100\ \mathrm{s},
-\]
+=0.100\ \mathrm{s}
+$$
 
-\[
+$$
 f_{\mathrm{conversion}}
 =\frac{1000}{0.100\ \mathrm{s}}
-=10{,}000\ \mathrm{s}^{-1}.
-\]
+=10{,}000\ \mathrm{s}^{-1}
+$$
 
 Averaging improves voltage precision but reduces time resolution because each reported
 average represents approximately 0.10 s of measurements. Averaging therefore acts as a
@@ -196,21 +187,21 @@ Probe attenuation: ×10
 The following table gives two calculated operating points. The oscilloscope settings and
 graticule divisions are calculated examples rather than recorded measurements.
 
-For Arduino Uno pin 9,
+For Arduino Uno pin 9:
 
-\[
+$$
 f_{\mathrm{PWM}}
 =\frac{16.0\times10^6}{64(510)}
-=490.196\ \mathrm{Hz}.
-\]
+=490.196\ \mathrm{Hz}
+$$
 
-Therefore,
+Therefore:
 
-\[
+$$
 T_{\mathrm{PWM}}
 =\frac{1}{490.196\ \mathrm{Hz}}
-=2.040\ \mathrm{ms}.
-\]
+=2.040\ \mathrm{ms}
+$$
 
 | Quantity | Setting A (low) | Setting B (high) |
 |---|---:|---:|
@@ -227,73 +218,73 @@ T_{\mathrm{PWM}}
 | Period | 2.040 ms | 2.040 ms |
 | Frequency | 490.196 Hz | 490.196 Hz |
 | Calculated duty cycle | 25.10% | 74.90% |
-| Expected duty \(=\mathrm{PWM}/255\times100\%\) | 25.10% | 74.90% |
+| Expected duty $=\mathrm{PWM}/255\times100\%$ | 25.10% | 74.90% |
 | Figure file | `m01_fig04_pwm_waveform.jpg` | A different Setting B image is still required |
 
 ### Voltage Calculation with the ×10 Probe
 
-For both settings,
+For both settings:
 
-\[
+$$
 V_{\mathrm{HIGH}}-V_{\mathrm{LOW}}
 =(0.500\ \mathrm{div})(1.00\ \mathrm{V/div})(10)
-=5.00\ \mathrm{V}.
-\]
+=5.00\ \mathrm{V}
+$$
 
 ### Duty-Cycle Calculations
 
-For Setting A,
+For Setting A:
 
-\[
+$$
 D_A
 =\frac{64}{255}\times100\%
-=25.10\%.
-\]
+=25.10\%
+$$
 
-For Setting B,
+For Setting B:
 
-\[
+$$
 D_B
 =\frac{191}{255}\times100\%
-=74.90\%.
-\]
+=74.90\%
+$$
 
 ### Horizontal-Division Calculations
 
-With \(0.500\ \mathrm{ms/div}\),
+With $0.500\ \mathrm{ms/div}$:
 
-\[
+$$
 N_{\mathrm{cycle}}
 =\frac{2.040\ \mathrm{ms}}{0.500\ \mathrm{ms/div}}
-=4.080\ \mathrm{div}.
-\]
+=4.080\ \mathrm{div}
+$$
 
-For Setting A,
+For Setting A:
 
-\[
+$$
 N_{\mathrm{HIGH},A}
 =(4.080)(0.25098)
-=1.024\ \mathrm{div}.
-\]
+=1.024\ \mathrm{div}
+$$
 
-For Setting B,
+For Setting B:
 
-\[
+$$
 N_{\mathrm{HIGH},B}
 =(4.080)(0.74902)
-=3.056\ \mathrm{div}.
-\]
+=3.056\ \mathrm{div}
+$$
 
 Expected frequency on Uno pin 9: approximately 490 Hz.  
 Calculated frequency: 490.196 Hz.
 
 The percentage difference is
 
-\[
+$$
 \text{Difference}
 =\frac{|490.196-490|}{490}\times100\%
-=0.040\%.
-\]
+=0.040\%
+$$
 
 The potentiometer changes the averaged input voltage, PWM command, HIGH-pulse duration,
 duty cycle, average LED power, and apparent brightness. The HIGH and LOW voltage levels,
@@ -310,46 +301,46 @@ resolve the individual pulses.
 For an unaveraged 10-bit conversion using the assumed 5.00 V reference, the smallest
 theoretically possible nonzero jump is one ADC count:
 
-\[
+$$
 \Delta V
 =\frac{5.00\ \mathrm{V}}{1024}
-=4.8828\ \mathrm{mV}.
-\]
+=4.8828\ \mathrm{mV}
+$$
 
 Calculated smallest nonzero change between consecutive unaveraged points:
 **4.8828 mV**.
 
 Compared with
 
-\[
+$$
 \frac{V_{\mathrm{ref}}}{1024}
-=4.8828\ \mathrm{mV},
-\]
+=4.8828\ \mathrm{mV}
+$$
 
 the ratio is
 
-\[
+$$
 \frac{4.8828\ \mathrm{mV}}{4.8828\ \mathrm{mV}}
-=1.000.
-\]
+=1.000
+$$
 
 This is the calculated value. The actual smallest jump in the Serial Plotter data
 requires the raw capture.
 
 For 1000 independent readings, the predicted standard-deviation ratio is
 
-\[
+$$
 \frac{\sigma_{1000}}{\sigma_1}
 =\frac{1}{\sqrt{1000}}
-=0.0316.
-\]
+=0.0316
+$$
 
 The predicted effective-bit gain is
 
-\[
+$$
 \frac{1}{2}\log_2(1000)
-\approx4.98\ \text{bits}.
-\]
+\approx4.98\ \text{bits}
+$$
 
 This improvement assumes a stable underlying voltage and sufficiently independent,
 zero-mean fluctuations. Averaging improves precision but does not eliminate calibration
