@@ -5,7 +5,7 @@ reference. Values requiring direct bench observations are explicitly identified 
 measured.**
 
 Recorded by: Joshua, Tianren
-Date: September 14, 2026
+Date: September 3, 2026
 
 **Scope: BK Precision 2120B, 30 MHz dual trace — ANALOG.** The oscilloscope has no
 automatic measurement readout or screenshot export. Values are determined from the
