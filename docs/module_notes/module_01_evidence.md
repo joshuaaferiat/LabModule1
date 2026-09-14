@@ -195,7 +195,7 @@ Choosing N is choosing where to sit between a noisy fast loop and a quiet slow o
 
 ## 5. Digital output and PWM
 
-### Blink (Part 1) — calculated, not measured
+### Blink (Part 1)
 
 ![Part 1 bench](../../figures/module_01/m01_fig06_part1_bench.jpg)
 
