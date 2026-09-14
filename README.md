@@ -54,9 +54,6 @@ inspected but never energised.
 | 3D | Time cost of 1000 conversions | Not started |
 | 4 | Averaged pot voltage → PWM → LED brightness | **Measured**: 485 Hz; duty 64 % and 25 % at two settings. Knob settings still unrecorded, so period-held-fixed is unproven. |
 
-Full outstanding list, audited against the A1 rubric:
-[`docs/reference/MISSING_ITEMS.md`](docs/reference/MISSING_ITEMS.md)
-
 ### Sketches
 
 All at 9600 baud. `TODO` in the last column: mark each one you have actually uploaded and
