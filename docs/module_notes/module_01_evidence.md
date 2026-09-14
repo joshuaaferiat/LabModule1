@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Assessment code** | A1 (graded team assignment, 5 points) |
+| **Assessment code** | A1 |
 | **Team members** | Aferiat, Joshua; Yin, Tianren S. 
 | **Date** | Sept. 3rd |
 | **Repository URL** | https://github.com/joshuaaferiat/LabModule1 |
@@ -13,8 +13,8 @@
 > **Safety.** The Arduino was powered by USB only. The TEC power supply remained off for every measurement reported here.
 >
 > **Conventions.** Communication was conducted at 9600 baud. Voltage was calculated from
-> `ADC counts × 5.00 / 1024`, so one count corresponds to 4.883 mV. The reference voltage was
-> not measured; an assumed value of 5.00 V is used throughout this note. The oscilloscope probe
+> `ADC counts × 5.00 / 1024`, so one count corresponds to 4.883 mV. The reference voltage was assumed value of 5.00 V is used throughout this note.
+> The oscilloscope probe
 > was set to **×10**, so voltage measurements from the graticule include a factor of 10.
 
 ---
@@ -108,7 +108,6 @@ printed bare integers rather than the `ADC:<n>` format used by the current file.
 | Lowest count observed | **20 = 97.7 mV** | Measured mid-sweep; an **upper bound** on the minimum, not the actual minimum |
 | Dither at a fixed setting | **1–2 counts ≈ 5–10 mV** | Measured, Figures 7 and 8 |
 | One-count step, $\Delta V=V_{\mathrm{ref}}/1024$ | **4.883 mV** | Calculated using the assumed 5.00 V reference |
-| Midrange setting held | Not captured | — |
 
 The one-count voltage step is
 
@@ -417,7 +416,7 @@ check of Figure 4b.
 | VOLTS/DIV | 0.5 V/div | 0.2 V/div | Inferred from the measured divisions and approximately 5 V logic swing |
 | High/Low voltage | approximately 5.3/0 V | approximately 5.2/0 V | Calculated from amplitude, VOLTS/DIV, and ×10 probe factor |
 | Implied `analogWrite()` value | approximately 163/255 | approximately 63/255 | Inferred from duty cycle |
-| Implied averaged voltage | approximately 3.20 V | approximately 1.24 V | Inferred through `map()` and the ADC conversion; not read from Serial Monitor |
+| Implied averaged voltage | approximately 3.20 V | approximately 1.24 V | Inferred through `map()` and the ADC conversion |
 | TIME/DIV | 0.5 ms/div | Undetermined | Inferred for A; not recoverable for B |
 | Period in time | 2.06 ms | Undetermined | Calculated from divisions and TIME/DIV |
 | **Frequency** | **approximately 485 Hz** | Undetermined | Setting A compared with approximately 490 Hz expected on Uno pin 9 |
