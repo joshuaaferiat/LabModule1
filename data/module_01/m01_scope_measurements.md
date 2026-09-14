@@ -3,7 +3,7 @@
 **STATUS: This document contains calculated/nominal values only. Values requiring direct
 bench observations are explicitly identified as not measured.**
 
-Recorded by: ______________  
+Recorded by: Joshua, Tianren
 Date: September 3, 2026
 
 **Scope: BK Precision 2120B, 30 MHz dual trace — ANALOG.** The scope has no cursors,
