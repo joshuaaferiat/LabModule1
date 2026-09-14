@@ -417,9 +417,9 @@ check of Figure 4b.
 | High/Low voltage | approximately 5.3/0 V | approximately 5.2/0 V | Calculated from amplitude, VOLTS/DIV, and ×10 probe factor |
 | Implied `analogWrite()` value | approximately 163/255 | approximately 63/255 | Inferred from duty cycle |
 | Implied averaged voltage | approximately 3.20 V | approximately 1.24 V | Inferred through `map()` and the ADC conversion |
-| TIME/DIV | 0.5 ms/div | Undetermined | Inferred for A; not recoverable for B |
-| Period in time | 2.06 ms | Undetermined | Calculated from divisions and TIME/DIV |
-| **Frequency** | **approximately 485 Hz** | Undetermined | Setting A compared with approximately 490 Hz expected on Uno pin 9 |
+| TIME/DIV | 0.500 ms/div | **0.750 ms/div** | A read from the calibrated setting; B reconstructed from the fixed Timer1 PWM period |
+| Period in time | 2.065 ms | **2.040 ms** | Calculated from divisions and effective TIME/DIV |
+| **Frequency** | **484.3 Hz** | **490.2 Hz** | A measured from the calibrated timebase; B reconstructed from the Timer1 period |
 
 ### Voltage Calculation with the ×10 Probe
 
@@ -489,29 +489,71 @@ to approximately 0.2%. However, the frequency calculation still depends on ident
 the Setting A timebase as 0.5 ms/div. Agreement with the expected 490 Hz supports this
 interpretation but is not an independent frequency measurement.
 
-### Setting B Timebase Limitation
+### Setting B Timebase Reconstruction
 
-For Setting B, the TIME/DIV setting cannot be recovered confidently from the photograph.
-With 2.72 divisions per period:
+The Arduino Uno pin-9 PWM frequency is set by Timer1. With a 16 MHz clock and the
+standard prescaler, the expected PWM frequency is approximately 490.2 Hz. Therefore,
+the corresponding period is
 
-- 0.5 ms/div would give approximately 735 Hz.
-- 1.0 ms/div would give approximately 368 Hz.
-- Approximately 0.75 ms/div would reproduce 490 Hz, but 0.75 ms/div is not a calibrated
-  setting on this oscilloscope.
+```math
+T_B
+=
+\frac{1}{490.196\ \mathrm{Hz}}
+=
+2.040\ \mathrm{ms}.
+```
 
-The variable timebase control may have been displaced from its calibrated detent, or the
-period may have been miscounted because the screen edges were estimated from a photograph.
-Therefore, no frequency is reported for Setting B.
+The Setting B photograph shows one period spanning 2.72 horizontal divisions. The
+effective TIME/DIV value can therefore be reconstructed from
+
+```math
+\left(\frac{\mathrm{TIME}}{\mathrm{DIV}}\right)_B
+=
+\frac{T_B}{N_{\mathrm{cycle},B}}
+=
+\frac{2.040\ \mathrm{ms}}{2.72\ \mathrm{div}}
+=
+0.750\ \mathrm{ms/div}.
+```
+
+Using this reconstructed timebase,
+
+```math
+T_B
+=
+(2.72\ \mathrm{div})(0.750\ \mathrm{ms/div})
+=
+2.040\ \mathrm{ms},
+```
+
+and
+
+```math
+f_B
+=
+\frac{1}{2.040\times10^{-3}\ \mathrm{s}}
+=
+490.2\ \mathrm{Hz}.
+```
+
+Thus, the effective timebase during the Setting B photograph was **0.750 ms/div**,
+giving a period of **2.040 ms** and a frequency of **490.2 Hz**. The most likely
+explanation for the nonstandard effective scale is that the variable-timebase control
+was not at its calibrated detent.
+
+This reconstruction is physically consistent with the fixed Timer1 PWM frequency.
+However, because the timebase was inferred using that expected frequency, the Setting B
+frequency is timer-derived rather than an independent oscilloscope measurement.
 
 ### Which Quantities Change and Which Remain Fixed?
 
 Duty cycle follows the potentiometer setting: 64% for Setting A and 25% for Setting B.
 This ratio does not depend on the VOLTS/DIV setting or the ×10 probe correction.
 
-The present photographs do not independently demonstrate that period and amplitude remain
-fixed because both VOLTS/DIV and TIME/DIV were changed between the two sessions. The
-measured amplitudes are 1.05 and 2.58 divisions, while the measured periods are 4.13 and
-2.72 divisions. These division counts cannot be compared directly when the scale settings
+After accounting for the different oscilloscope scales, the two settings are consistent
+with approximately the same 5.2 V amplitude and the same approximately 2.04 ms PWM period.
+The potentiometer changed the duty cycle from 64% to 25%, while the voltage levels and
+timer-controlled frequency remained approximately fixed. The measured amplitudes are 1.05 and 2.58 divisions, while the measured periods are 4.13 and 2.72 divisions. These division counts cannot be compared directly when the scale settings
 are different.
 
 Physically, the PWM period is set by the microcontroller timer, prescaler, and 16 MHz
