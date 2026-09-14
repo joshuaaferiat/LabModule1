@@ -6,7 +6,7 @@
 |---|---|
 | **Assessment code** | A1 (graded team assignment, 5 points) |
 | **Team members** | `FILL IN: both members' full names` |
-| **Date** | `FILL IN` |
+| **Date** | Sept. 3rd |
 | **Repository URL** | `FILL IN: https://github.com/<org-or-user>/LabModule1` |
 | **Git checkpoint (GC) commit** | `FILL IN: full 40-character hash` |
 
