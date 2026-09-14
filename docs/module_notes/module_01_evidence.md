@@ -10,11 +10,12 @@
 | **Repository URL** | `FILL IN: https://github.com/<org-or-user>/LabModule1` |
 | **Git checkpoint (GC) commit** | `FILL IN: full 40-character hash` |
 
-> **Safety.** The Arduino was powered by USB only. The TEC power supply remained off for every
-> measurement reported here.
+> **Safety.** The Arduino was powered by USB only. The TEC power supply remained off for every measurement reported here.
 >
-> **Conventions.** 9600 baud throughout; volts = ADC counts × 5.00 / 1024, so one count is
-> 4.883 mV. V_ref was not measured — the nominal 5.00 V is assumed everywhere below.
+> **Conventions.** Communication was conducted at 9600 baud. Voltage was calculated from
+> `ADC counts × 5.00 / 1024`, so one count corresponds to 4.883 mV. The reference voltage was
+> not measured; an assumed value of 5.00 V is used throughout this note. The oscilloscope probe
+> was set to **×10**, so voltage measurements from the graticule include a factor of 10.
 
 ---
 
@@ -23,24 +24,47 @@
 ![Labeled apparatus](../../figures/module_01/m01_fig01_apparatus.jpg)
 
 **Figure 1.** Module 1 apparatus. Arduino Uno (ELEGOO UNO R3) on USB power; 100 kΩ trimmer
-potentiometer as a divider into `A0`; LED with a 150 kΩ series resistor; oscilloscope probe.
-Thermistor, TEC 8 cold plate and bench supply present but not powered.
+potentiometer configured as a voltage divider into `A0`; LED with a 150 kΩ series resistor;
+and oscilloscope probe. The thermistor, TEC 8 cold plate, and bench supply were present but
+not powered.
 
-**Wiring.** Pot outer terminals → `5V` and `GND`, wiper → `A0`. Built-in LED on pin 13.
-External LED: pin `9` → 150 kΩ → LED → `GND`; the same LED serves Parts 1 and 4. Oscilloscope
-on CH2, DC coupled, probe on `FILL IN: pin ___`, ground clip to Arduino `GND`.
+**Wiring.** The potentiometer outer terminals were connected to `5V` and `GND`, and the
+wiper was connected to `A0`. The built-in LED was driven by pin 13. The external LED circuit
+was pin `9` → 150 kΩ resistor → LED → `GND`; the same LED was used in Parts 1 and 4. The
+oscilloscope was connected to CH2 with DC coupling, the ×10 probe tip connected to pin `9`,
+and the ground clip connected to Arduino `GND`.
 
-**Instrument.** BK Precision 2120B, 30 MHz dual trace — **analog**. No cursors, no measurement
-readout, no screenshot export. Every scope value below is read off the graticule and converted
-using the front-panel settings.
+**Instrument.** BK Precision 2120B, 30 MHz dual-trace analog oscilloscope. It has no cursors,
+automatic measurement readout, or screenshot export. Every scope value below was read from
+the graticule and converted using the front-panel settings and ×10 probe factor.
 
-**On the 150 kΩ series resistor.** The assignment specifies 200–4000 Ω, so this is a departure
-worth stating plainly. With a blue LED (V_f ≈ 3.1 V) on a 5 V rail it passes
-(5.0 − 3.1)/150 kΩ ≈ 13 µA, roughly forty times below the low end of the specified range, which
-makes the Part 4 brightness check hard to see by eye. It does not affect any measurement
-reported here: the oscilloscope reads the pin voltage, not the LED current, and at 13 µA the
-output driver is essentially unloaded, so the high level sits at nearly the full supply rail
-with no sag.
+The voltage conversion is
+
+$$
+\Delta V
+=
+(\text{vertical divisions})
+(\text{VOLTS/DIV})
+(10).
+$$
+
+**On the 150 kΩ series resistor.** The assignment specifies 200–4000 Ω, so the resistor
+used here is a departure from the assigned range. With a blue LED having approximately
+$V_f=3.1\ \mathrm{V}$ on a 5.00 V rail, the current is
+
+$$
+I
+=
+\frac{5.00\ \mathrm{V}-3.1\ \mathrm{V}}
+{150\ \mathrm{k\Omega}}
+\approx 13\ \mu\mathrm{A}.
+$$
+
+This is roughly forty times smaller than the current produced by the largest resistor in
+the assigned range, making the Part 4 brightness change difficult to see by eye. It does
+not materially affect the reported pin-voltage measurement because the oscilloscope reads
+the output-pin voltage rather than LED current. At approximately 13 µA, the output driver
+is effectively unloaded, so little voltage sag is expected.
 
 ---
 
@@ -52,319 +76,596 @@ with no sag.
 | [`m01_adc_raw.ino`](../../firmware/module_01/m01_adc_raw/m01_adc_raw.ino) | §3 ADC |
 | [`m01_adc_voltage.ino`](../../firmware/module_01/m01_adc_voltage/m01_adc_voltage.ino) | §3 conversion |
 | [`m01_avg_compare.ino`](../../firmware/module_01/m01_avg_compare/m01_avg_compare.ino) | §4 averaging |
-| [`m01_avg_stats_onboard.ino`](../../firmware/module_01/m01_avg_stats_onboard/m01_avg_stats_onboard.ino) | §4 on-board σ |
+| [`m01_avg_stats_onboard.ino`](../../firmware/module_01/m01_avg_stats_onboard/m01_avg_stats_onboard.ino) | §4 onboard statistics |
 | [`m01_avg_timing.ino`](../../firmware/module_01/m01_avg_timing/m01_avg_timing.ino) | §4 acquisition time |
 | [`m01_pwm_from_pot.ino`](../../firmware/module_01/m01_pwm_from_pot/m01_pwm_from_pot.ino) | §5 PWM |
 
-Superseded variants are in [`firmware/module_01/archive/`](../../firmware/module_01/archive/)
-and produced none of the numbers below.
+Superseded variants are stored in
+[`firmware/module_01/archive/`](../../firmware/module_01/archive/) and produced none of
+the reported results.
 
-**Provenance.** `m01_blink_ratio.ino` is a consolidated reconstruction — the lab work used
-direct edits to the stock Arduino Blink example, and this file reproduces those three cases
-with the same delay constants. The §3 captures were made with an earlier sketch that printed
-bare integers rather than the `ADC:<n>` format the current file uses.
+**Provenance.** `m01_blink_ratio.ino` is a consolidated reconstruction. The lab work used
+direct edits to the stock Arduino Blink example, and this file reproduces the three cases
+using the same delay constants. The §3 captures were made with an earlier sketch that
+printed bare integers rather than the `ADC:<n>` format used by the current file.
 
 ---
 
-## 3. ADC digitization
+## 3. ADC Digitization
 
 ![ADC range sweep](../../figures/module_01/m01_fig08_adc_sweep.jpg)
 
-**Figure 8.** Potentiometer swept across its travel. Serial Monitor reads 1022, 1022, 1022,
-1023, 1022, 1022, 1022.
+**Figure 8.** Potentiometer swept across its travel. Serial Monitor displays 1022, 1022,
+1022, 1023, 1022, 1022, and 1022.
 
 ![ADC dither](../../figures/module_01/m01_fig07_adc_dither.jpg)
 
-**Figure 7.** Vertical axis expanded to 1015–1024 counts, potentiometer untouched.
+**Figure 7.** Vertical axis expanded to 1015–1024 counts with the potentiometer untouched.
 
 | Quantity | Value | Source |
-|---|---|---|
-| Maximum count reached | **1023** = 4.995 V | measured, Fig 8 |
-| Lowest count observed | **20** = 97.7 mV | measured mid-sweep — an **upper bound** on the minimum, not the minimum |
-| Dither at a fixed setting | **1–2 counts** ≈ 5–10 mV | measured, Figs 7 and 8 |
-| One-count step ΔV = V_ref / 1024 | **4.883 mV** | calculated at the nominal 5.00 V |
-| Midrange setting held | — | not captured |
+|---|---:|---|
+| Maximum count reached | **1023 = 4.995 V** | Measured, Figure 8 |
+| Lowest count observed | **20 = 97.7 mV** | Measured mid-sweep; an **upper bound** on the minimum, not the actual minimum |
+| Dither at a fixed setting | **1–2 counts ≈ 5–10 mV** | Measured, Figures 7 and 8 |
+| One-count step, $\Delta V=V_{\mathrm{ref}}/1024$ | **4.883 mV** | Calculated using the assumed 5.00 V reference |
+| Midrange setting held | Not captured | — |
 
-### Why the readings occupy discrete levels
+The one-count voltage step is
 
-The ADC does not report a voltage; it reports which of 1024 integer codes the input fell into.
-The 0–5 V span is divided into 1024 windows of 4.883 mV each, so every input inside one window
-produces the same code, and the output can only ever be one of 1024 values. Printing the result
-as `2.4561 V` rather than `503` rescales that integer into volts but adds no physical
-information — the underlying measurement still has exactly 1024 possible outcomes, and the
-extra decimal places are an artefact of the arithmetic rather than evidence of finer
-resolution. The apparent smoothness of a plotted trace comes from the plotter drawing straight
-lines between discrete points, not from the ADC resolving anything between them.
+$$
+\Delta V
+=
+\frac{5.00\ \mathrm{V}}{1024}
+=
+0.0048828\ \mathrm{V}
+=
+4.883\ \mathrm{mV}.
+$$
 
-### Do the values vary when nothing is touched?
+The maximum reported voltage using the sketch’s `/1024.0` conversion is
 
-Yes. Both figures show the reported code moving between 1022 and 1023 while the potentiometer
-is untouched, occasionally spanning about two counts — roughly 5–10 mV of fluctuation. The
-sources are ordinary: thermal noise in the divider, ripple and switching noise on the USB-derived
-5 V rail, mains pickup on the leads, and the ADC's own comparator noise. Because the divider
-sits at 100 kΩ, its Thévenin source impedance reaches 25 kΩ at midrange, well above the
-ATmega328P's recommended ≤10 kΩ, which leaves the sample-and-hold capacitor less time to settle
-and makes the converter more susceptible to all of these.
+$$
+V_{\max}
+=
+1023\left(\frac{5.00\ \mathrm{V}}{1024}\right)
+=
+4.9951\ \mathrm{V}.
+$$
 
-This dither is not merely a nuisance — it is the precondition the averaging experiment depends
-on. If the input were perfectly quiet and every conversion returned the same code, averaging
-would return that same code forever and could recover nothing. Because neighbouring codes are
-being sampled, the fraction of samples landing in each code carries information about where
-between them the true voltage lies, and averaging extracts it.
+The lowest observed value corresponds to
 
-### Serial Monitor versus Serial Plotter
+$$
+V_{20}
+=
+20\left(\frac{5.00\ \mathrm{V}}{1024}\right)
+=
+0.09766\ \mathrm{V}.
+$$
 
-Each display hides what the other shows. Serial Monitor gives the exact integer for every
-sample, so a one-count step is unambiguous and untagged text (labels, version strings) is
-visible — but a column of numbers scrolling past makes it nearly impossible to see whether the
-signal is drifting, oscillating, or steady. Serial Plotter shows that shape immediately: the
-autoscaled trace in Figure 7 makes a 1–2 count wander obvious at a glance, and a drift over
-several seconds would be visible as a slope. What it will not give you is the value of any
-individual point, and it silently discards any text it cannot parse as a labeled number. The
-two are complementary, and Part 3A is best answered by having both open at once.
+### Why the Readings Occupy Discrete Levels
 
----
+The ADC does not directly report a voltage. It reports which of 1024 integer-code
+intervals contains the input voltage. The 0–5 V span is divided into 1024 intervals of
+approximately 4.883 mV each. Every input within one interval produces the same code, and
+the output can only be one of 1024 integer values.
 
-## 4. Averaging and acquisition time
+Printing `2.4561 V` instead of `503` rescales the integer into volts but adds no physical
+information. The underlying conversion still has only 1024 possible outcomes. The extra
+decimal places come from the arithmetic and do not demonstrate finer single-conversion
+resolution. The apparent smoothness of a plotted trace comes from the plotter drawing
+lines between discrete samples.
 
-### Measurement status
+### Do the Values Vary When Nothing Is Touched?
 
-**The averaging experiment was not captured.** `m01_avg_compare`, `m01_avg_stats_onboard` and
-`m01_avg_timing` were written and compile, but no saved run exists, so σ₁, σ₁₀₀₀, their ratio,
-the smallest discrete voltage jump and the elapsed time for 1000 conversions are all
-outstanding, and Figures 2 and 3 were not taken.
+Yes. Both figures show the reported code moving between 1022 and 1023 while the
+potentiometer is untouched, occasionally spanning approximately two counts or 5–10 mV.
 
-| Potentiometer block | Points | N | Mean (V) | σ (mV) | σ_N/σ_1 measured | σ_N/σ_1 predicted |
-|---|---|---|---|---|---|---|
-| Unaveraged | 100 | 1 | not measured | not measured | — | 1.000 |
-| Long average | 100 | 1000 | not measured | not measured | — | 0.0316 |
+Possible sources include thermal noise in the divider, ripple and switching noise on the
+USB-derived 5 V rail, mains pickup on the leads, and the ADC comparator’s internal noise.
+Because the divider uses a 100 kΩ potentiometer, its Thévenin source impedance reaches
+25 kΩ at midrange. This exceeds the ATmega328P recommendation of approximately 10 kΩ or
+less, leaving the sample-and-hold capacitor less time to settle and making the measurement
+more susceptible to these effects.
 
-The one relevant quantity this repository does measure is the 1–2 counts of dither in §3, which
-establishes that averaging *would* work here, but not by how much.
-[`analysis/module_01/averaging_stats.py`](../../analysis/module_01/averaging_stats.py) will
-produce every entry in the table from a capture when one is taken.
+This dither is also necessary for the averaging experiment. If the input were perfectly
+stable and every conversion returned the same code, averaging would return that same code
+and could not recover additional information. When neighboring codes are sampled, the
+fraction of readings occupying each code contains information about the input’s position
+between those codes.
 
-### Why averaging improves precision
+### Serial Monitor Versus Serial Plotter
 
-Each conversion carries an independent random error of standard deviation σ₁. Averaging N such
-readings averages the errors too, and the standard deviation of the mean of N independent
-samples is σ₁/√N. The signal is unchanged by averaging, so precision improves by a factor √N:
+Serial Monitor gives the exact integer for every sample, making a one-count change
+unambiguous. It also displays labels and other text. However, a scrolling column of
+numbers makes it difficult to identify drift, oscillation, or longer-term behavior.
 
-    σ_N / σ_1 = 1/√N,   and for N = 1000,   1/√1000 = 0.0316
-
-One bit of resolution is a factor of two, so the number of bits gained is
-
-    bits = log₂(√N) = ½ · log₂ N
-    N = 1000:   ½ × 9.966 = 4.98 ≈ 5 effective bits
-
-so a 10-bit converter can, under the right conditions, report a value with roughly 15 bits of
-effective precision.
-
-**The assumptions this requires, and why each matters.** The underlying voltage must be constant
-over the averaging window, or the mean tracks the drift rather than the value. The fluctuations
-must have approximately zero mean, or averaging converges on a biased value rather than the true
-one. Successive readings must be sufficiently independent — correlated errors do not average
-down as 1/√N, and correlated pickup such as 60 Hz mains hum can survive averaging almost intact.
-And there must be enough analog noise to dither across neighbouring codes, for the reason given
-in §3.
-
-**Precision is not accuracy.** Averaging reduces random scatter about whatever value the
-instrument reports. It does nothing about systematic error: if V_ref is really 4.93 V and the
-sketch assumes 5.00 V, every averaged reading is 1.4 % wrong no matter how many samples are
-taken, and the tighter scatter simply makes the wrong answer look more confident. This is why
-V_ref should be measured rather than assumed, and it is a limitation carried by this note.
-
-### Time cost: averaging as a low-pass filter
-
-The Arduino reference gives roughly 100 µs per `analogRead()` conversion, about 10 kSa/s, so
-1000 readings should take roughly 0.10 s before any arithmetic or serial output is added.
-
-Averaging 1000 consecutive samples is a boxcar (moving-average) filter of width ≈0.10 s, and a
-boxcar filter is a low-pass filter. Fluctuations faster than the window average toward zero —
-that cancellation *is* the precision gain — but any genuine change in the input during the
-window is smoothed and delayed rather than reported. The precision bought is paid for directly
-in time resolution: the same operation that removes noise also removes real signal above
-roughly 10 Hz, and it delays the reported value by about half the window.
-
-That trade is the central design tension of the instrument this course is building. A
-temperature controller that averages heavily reads its sensor very precisely but learns about a
-disturbance late, and a control loop that acts on stale information can overshoot or oscillate.
-Choosing N is choosing where to sit between a noisy fast loop and a quiet slow one.
+Serial Plotter shows the signal’s shape immediately. The expanded trace in Figure 7 makes
+the one- to two-count variation visible at a glance, and a slow drift would appear as a
+slope. However, the plotter does not clearly show the exact value of each point and
+discards text that it cannot interpret as plotted numerical data. The two displays
+therefore provide complementary information.
 
 ---
 
-## 5. Digital output and PWM
+## 4. Averaging and Acquisition Time
 
-### Blink (Part 1)
+### Measurement Status
+
+**The averaging experiment was not captured.** `m01_avg_compare`,
+`m01_avg_stats_onboard`, and `m01_avg_timing` were written and compile, but no saved run
+exists. Therefore, $\sigma_1$, $\sigma_{1000}$, their measured ratio, the smallest
+discrete voltage jump, and the elapsed time for 1000 conversions remain outstanding.
+Figures 2 and 3 were not taken.
+
+| Potentiometer block | Points | $N$ | Mean (V) | $\sigma$ (mV) | Measured $\sigma_N/\sigma_1$ | Predicted $\sigma_N/\sigma_1$ |
+|---|---:|---:|---:|---:|---:|---:|
+| Unaveraged | 100 | 1 | Not measured | Not measured | — | 1.000 |
+| Long average | 100 | 1000 | Not measured | Not measured | — | 0.0316 |
+
+The one relevant measured quantity is the one- to two-count dither documented in §3.
+This establishes that averaging could improve precision, but it does not show the actual
+amount of improvement.
+
+[`analysis/module_01/averaging_stats.py`](../../analysis/module_01/averaging_stats.py)
+will calculate the entries in the table after a raw capture is obtained.
+
+### Why Averaging Improves Precision
+
+Suppose each conversion has independent random error with standard deviation $\sigma_1$.
+For an average of $N$ independent measurements, the standard deviation of the mean is
+
+$$
+\sigma_N
+=
+\frac{\sigma_1}{\sqrt{N}}.
+$$
+
+Therefore,
+
+$$
+\frac{\sigma_N}{\sigma_1}
+=
+\frac{1}{\sqrt{N}}.
+$$
+
+For $N=1000$,
+
+$$
+\frac{\sigma_{1000}}{\sigma_1}
+=
+\frac{1}{\sqrt{1000}}
+=
+0.0316.
+$$
+
+The ideal number of effective bits gained is
+
+$$
+\text{bits gained}
+=
+\log_2(\sqrt{N})
+=
+\frac{1}{2}\log_2(N).
+$$
+
+For $N=1000$,
+
+$$
+\text{bits gained}
+=
+\frac{1}{2}\log_2(1000)
+=
+\frac{1}{2}(9.966)
+=
+4.98
+\approx 5\ \text{bits}.
+$$
+
+Under suitable conditions, averaging can therefore allow a 10-bit ADC to report an
+estimate with approximately 15 bits of effective precision.
+
+The calculation requires several assumptions:
+
+- The underlying voltage must remain constant during the averaging interval.
+- The fluctuations must have approximately zero mean.
+- Successive errors must be sufficiently independent.
+- There must be enough analog noise or dither to sample neighboring ADC codes.
+
+Correlated errors do not decrease as $1/\sqrt{N}$. For example, correlated 60 Hz mains
+pickup can remain after averaging instead of canceling.
+
+### Precision Is Not Accuracy
+
+Averaging reduces random scatter around the value reported by the instrument. It does
+not remove systematic error. For example, if the actual reference voltage were 4.93 V
+while the sketch assumed 5.00 V, the fractional calibration error would be
+
+$$
+\frac{5.00-4.93}{5.00}\times100\%
+=
+1.4\%.
+$$
+
+No amount of averaging would remove this error. The averaged values could have less
+scatter while remaining systematically incorrect. This is why measuring the reference
+voltage is important and why the unmeasured reference is a limitation of this note.
+
+### Time Cost: Averaging as a Low-Pass Filter
+
+The Arduino reference gives approximately 100 µs per `analogRead()` conversion, or about
+10 kSa/s. The calculated time for 1000 readings is therefore
+
+$$
+t_{1000}
+=
+1000(100\ \mu\mathrm{s})
+=
+100{,}000\ \mu\mathrm{s}
+=
+0.10\ \mathrm{s}.
+$$
+
+This does not include arithmetic or Serial output time.
+
+Averaging 1000 consecutive samples acts as a boxcar filter with a width of approximately
+0.10 s. Rapid fluctuations tend to cancel, producing the precision improvement, but a
+real change occurring during the averaging window is smoothed and delayed. Frequency
+components near and above approximately 10 Hz are strongly attenuated, and the reported
+value is delayed by approximately half the averaging interval.
+
+This tradeoff is central to the instrument being developed. A temperature controller
+that averages heavily may read its sensor more precisely but respond to disturbances
+later. A control loop acting on delayed information may overshoot or oscillate. Choosing
+$N$ therefore means balancing a noisy, fast response against a quieter, slower response.
+
+---
+
+## 5. Digital Output and PWM
+
+### Blink — Part 1
 
 ![Part 1 bench](../../figures/module_01/m01_fig06_part1_bench.jpg)
 
-**Figure 6.** The Part 1 bench and components. Setup only — the external LED is not wired in
-this shot and the scope screen is blank, so it is not evidence that the circuit ran.
+**Figure 6.** Part 1 bench and components. This image documents the setup only. The
+external LED is not wired in this photograph and the oscilloscope screen is blank, so the
+image does not demonstrate that the circuit was running.
 
-The sketch is the stock Arduino Blink example, modified to drive an external LED on pin 9
-alongside `LED_BUILTIN` and to select the ratio from one constant. The values below come from
-the delay constants; the voltages are nominal ATmega328P output levels. Nothing here was
+The sketch began as the stock Arduino Blink example and was modified to drive an
+external LED on pin 9 alongside `LED_BUILTIN`. A constant selects the HIGH-to-LOW timing
+ratio. The timing values below come from the programmed delay constants. The voltage
+values are calculated using 5.00 V for HIGH and 0.00 V for LOW. These values were not
 measured.
 
 | `RATIO_CASE` | Ratio | On/off (ms) | Period (s) | Frequency (Hz) | Duty (%) | High/Low (V) |
-|---|---|---|---|---|---|---|
-| 0 | 1:1 | 1000 / 1000 | 2.000 | 0.500 | 50.0 | 5.0 / 0.0 nom. |
-| 1 | 10:1 | 1000 / 100 | 1.100 | 0.909 | 90.9 | 5.0 / 0.0 nom. |
-| 2 | 1:10 | 100 / 1000 | 1.100 | 0.909 | 9.1 | 5.0 / 0.0 nom. |
+|---|---|---:|---:|---:|---:|---:|
+| 0 | 1:1 | 1000 / 1000 | 2.000 | 0.500 | 50.0 | 5.0 / 0.0 |
+| 1 | 10:1 | 1000 / 100 | 1.100 | 0.909 | 90.9 | 5.0 / 0.0 |
+| 2 | 1:10 | 100 / 1000 | 1.100 | 0.909 | 9.1 | 5.0 / 0.0 |
 
-One delay was held at the stock 1000 ms and the other scaled, so **period and frequency change
-between the cases as well as duty cycle**. The 10:1 and 1:10 cases share a period and differ
-only in duty, which makes them the cleanest pair to compare. Treat the periods as lower bounds:
-`delay()` blocks for *at least* the requested interval, and `digitalWrite` plus loop overhead
-add to it, so the true periods run slightly above 2.000 s and 1.100 s by an amount this method
-cannot resolve.
+The calculations use
 
-**No oscilloscope figure, for a reason worth stating.** At 0.5–0.9 Hz a single period is longer
-than the 2120B's entire slowest sweep (0.1 s/div × 10 div = 1 s). At that speed the CRT spot
-crawls across the screen and the phosphor decays long before the sweep completes, so no
-persistent trace ever forms — there is nothing on the screen to photograph. The PWM waveform
-below, three orders of magnitude faster, does persist, and that contrast is itself a concrete
-demonstration of the persistence limit of an analog CRT.
+$$
+T
+=
+t_{\mathrm{on}}+t_{\mathrm{off}},
+$$
 
-### PWM (Part 4) — measured
+$$
+f
+=
+\frac{1}{T},
+$$
+
+and
+
+$$
+D
+=
+\frac{t_{\mathrm{on}}}{T}\times100\%.
+$$
+
+One delay was held at the stock 1000 ms while the other was changed. Therefore, period
+and frequency change between the 1:1 case and the other two cases, in addition to the
+change in duty cycle. The 10:1 and 1:10 cases have the same period and frequency but
+different duty cycles.
+
+The calculated periods should be treated as lower bounds. `delay()` blocks for at least
+the requested interval, while `digitalWrite()` and loop overhead add a small amount of
+time. The true periods should therefore be slightly longer than 2.000 s and 1.100 s.
+
+**No oscilloscope figure was obtained for Blink.** At 0.5–0.9 Hz, a single period is
+longer than the BK Precision 2120B’s entire slowest sweep:
+
+$$
+(0.1\ \mathrm{s/div})(10\ \mathrm{div})
+=
+1.0\ \mathrm{s}.
+$$
+
+At that sweep rate, the CRT spot moves slowly across the screen and the phosphor fades
+before a complete persistent trace forms. The PWM waveform below is approximately three
+orders of magnitude faster and therefore produces a persistent trace.
+
+### PWM — Part 4, Measured
 
 ![Part 4 wiring](../../figures/module_01/m01_fig09_part4_wiring.jpg)
 
-**Figure 9.** The bench as wired for Part 4.
+**Figure 9.** Bench wiring used for Part 4.
 
 ![PWM setting A](../../figures/module_01/m01_fig04b_pwm_measured.jpg)
 
-**Figure 4b.** Setting A. The graticule was calibrated from ten grid spacings in the photograph
-itself (97, 96, 95, 96, 95, 95, 95, 95, 95, 96 px — uniform to ±1 %, so perspective distortion
-is negligible): 95.0 px per division.
+**Figure 4b.** Setting A. The graticule was calibrated using ten grid spacings measured
+from the photograph: 97, 96, 95, 96, 95, 95, 95, 95, 95, and 96 pixels. This gives
+approximately 95.0 pixels per division. The spacing is uniform to approximately ±1%, so
+perspective distortion is small.
 
 ![PWM setting A, fast sweep](../../figures/module_01/m01_fig05b_pwm_measured_fast.jpg)
 
-**Figure 5b.** The same signal at a faster sweep — an independent check on Figure 4b.
+**Figure 5b.** The same PWM signal at a faster sweep speed, providing an independent
+check of Figure 4b.
 
 ![PWM setting B](../../figures/module_01/m01_fig10b_pwm_settingB_measured.jpg)
 
 **Figure 10b.** Setting B.
 
-| | Setting A | Setting B | Basis |
-|---|---|---|---|
-| **Duty cycle** | **64 %** | **25 %** | measured; a pure ratio, independent of any knob setting |
-| Period | 4.13 div | 2.72 div | measured in divisions |
-| Amplitude | 1.05 div | 2.58 div | measured in divisions |
-| VOLTS/DIV | 5 V/div | 2 V/div | inferred — a 5 V logic swing over the measured divisions gives 4.76 and 1.94 V/div, and the nearest standard steps are 5 and 2 |
-| High / Low voltage | ≈5.3 / ≈0 V | ≈5.2 / ≈0 V | from amplitude × inferred V/div |
-| Implied `analogWrite` | ≈163 / 255 | ≈63 / 255 | inferred from duty |
-| Implied averaged voltage | ≈3.20 V | ≈1.24 V | inferred back through `map()` and the ADC conversion, not read from Serial Monitor |
-| TIME/DIV | 0.5 ms/div | see below | inferred for A |
-| Period in time | 2.06 ms | — | follows from the TIME/DIV inference |
-| **Frequency** | **485 Hz** | — | vs ≈490 Hz expected on Uno pin 9 |
+| Quantity | Setting A | Setting B | Basis |
+|---|---:|---:|---|
+| **Duty cycle** | **64%** | **25%** | Measured ratio; independent of probe factor and knob calibration |
+| Period | 4.13 div | 2.72 div | Measured from graticule |
+| Amplitude | 1.05 div | 2.58 div | Measured from graticule |
+| Probe attenuation | ×10 | ×10 | Probe setting |
+| VOLTS/DIV | 0.5 V/div | 0.2 V/div | Inferred from the measured divisions and approximately 5 V logic swing |
+| High/Low voltage | approximately 5.3/0 V | approximately 5.2/0 V | Calculated from amplitude, VOLTS/DIV, and ×10 probe factor |
+| Implied `analogWrite()` value | approximately 163/255 | approximately 63/255 | Inferred from duty cycle |
+| Implied averaged voltage | approximately 3.20 V | approximately 1.24 V | Inferred through `map()` and the ADC conversion; not read from Serial Monitor |
+| TIME/DIV | 0.5 ms/div | Undetermined | Inferred for A; not recoverable for B |
+| Period in time | 2.06 ms | Undetermined | Calculated from divisions and TIME/DIV |
+| **Frequency** | **approximately 485 Hz** | Undetermined | Setting A compared with approximately 490 Hz expected on Uno pin 9 |
 
-**Setting A.** Figures 4b and 5b were shot at two different sweep speeds and give the same
-period to 0.2 %, which is what makes 485 Hz credible — it is a cross-check rather than a single
-reading. The inference is singular, though: assuming 0.5 ms/div is what *produces* 485 Hz, so
-agreement with the 490 Hz specification corroborates that assumption rather than independently
-confirming the frequency.
+### Voltage Calculation with the ×10 Probe
 
-**Setting B — the TIME/DIV cannot be inferred.** At 2.72 divisions per period, no standard step
-yields the expected ≈490 Hz: 0.5 ms/div gives 735 Hz, 1 ms/div gives 368 Hz, and the ≈0.75 ms/div
-that would fit is not a setting the instrument has. Either the variable timebase control was off
-its calibrated detent, or the division count is slightly wrong because the screen edges were
-judged from a photograph. Reading the panel at the bench settles it, and until then no frequency
-is claimed for setting B.
+For Setting A,
 
-**Which quantities change and which stay fixed.** Duty cycle clearly follows the potentiometer —
-64 % against 25 %, measured without needing any calibration at all, since it is the ratio of the
-high run to the rise-to-rise spacing. **That period and amplitude stay fixed is not yet
-demonstrated by this evidence:** amplitude reads 1.05 div and 2.58 div, and period 4.13 div and
-2.72 div, so both VOLTS/DIV and TIME/DIV must have been altered between the two sessions — a PWM
-period is set by the timer and cannot actually change. Capturing both settings in one sitting
-without touching the controls would close it. On the physics, the period is fixed by Timer1's
-prescaler and the 16 MHz clock, and `analogWrite` changes only the compare value, so duty is the
-only quantity software can move.
+$$
+V_{\mathrm{pp},A}
+=
+(1.05\ \mathrm{div})
+(0.5\ \mathrm{V/div})
+(10)
+=
+5.25\ \mathrm{V}.
+$$
 
-**Why the LED looks continuously lit.** At ≈485 Hz the LED is switching on and off roughly 485
-times a second, about an order of magnitude above the 50–60 Hz range at which flicker typically
-fuses into steady light, so the eye and brain integrate the pulses into a constant apparent
-brightness rather than resolving them. The oscilloscope has no such integration and shows the
-individual pulses directly. Flicker fusion is not one universal frequency: it rises with
-brightness and contrast, it is higher in peripheral vision than at the centre of gaze, and it
-depends on the fraction of the field the source occupies and on the observer. A dim LED viewed
-directly may appear steady at 50 Hz while a bright one seen from the corner of the eye still
-flickers noticeably at 80 Hz — which is why the 50–60 Hz figure is a rule of thumb rather than a
-threshold.
+Therefore, the measured HIGH and LOW levels are approximately 5.3 V and 0 V.
 
-**Precision through the chain.** `m01_pwm_from_pot` averages 1000 readings, then casts the
-result to `int` before `map(…, 0, 1023, 0, 255)`. The effective bits that averaging buys cannot
-survive an 8-bit actuator command in any case — the PWM output has only 256 levels — so
-precision at the sensor does not automatically become precision at the actuator. That is a real
-instrument-design point and it will matter again when this loop drives the TEC.
+For Setting B,
 
-### What the oscilloscope showed that the serial displays did not
+$$
+V_{\mathrm{pp},B}
+=
+(2.58\ \mathrm{div})
+(0.2\ \mathrm{V/div})
+(10)
+=
+5.16\ \mathrm{V}.
+$$
 
-The essential difference is between a direct electrical measurement of the pin and a set of
-values chosen and printed by software. Serial Monitor and Serial Plotter report samples that the
-sketch decided to take, at whatever rate the sketch decided to print them, already converted to
-numbers by the ADC and the program's arithmetic; the oscilloscope draws the voltage on the wire
-itself, on its own timebase, with no involvement from the program at all. That distinction has
-concrete consequences here. The serial displays could never have shown the ≈2 ms PWM period,
-because at 9600 baud with a `delay()` in the loop they report at a few tens of hertz — three
-orders of magnitude too slow — and in any case they were displaying the *commanded* duty value,
-not the waveform that command produced. The scope resolved the individual pulses, the actual
-high and low rail levels, and the true period, which is what let us confirm that the pin really
-was switching at the ≈490 Hz the datasheet promises rather than merely that the program had
-asked it to. Put another way: the serial output can tell you what the software believes, and
-only the oscilloscope can tell you whether the hardware agreed.
+Therefore, the measured HIGH and LOW levels are approximately 5.2 V and 0 V.
+
+### Setting A Frequency
+
+For Setting A,
+
+$$
+T_A
+=
+(4.13\ \mathrm{div})
+(0.5\ \mathrm{ms/div})
+=
+2.065\ \mathrm{ms}.
+$$
+
+Thus,
+
+$$
+f_A
+=
+\frac{1}{2.065\times10^{-3}\ \mathrm{s}}
+=
+484.3\ \mathrm{Hz}
+\approx 485\ \mathrm{Hz}.
+$$
+
+Compared with the expected 490 Hz,
+
+$$
+\text{percentage difference}
+=
+\frac{|485-490|}{490}\times100\%
+\approx 1.0\%.
+$$
+
+Figures 4b and 5b were photographed at different sweep speeds and give consistent periods
+to approximately 0.2%. However, the frequency calculation still depends on identifying
+the Setting A timebase as 0.5 ms/div. Agreement with the expected 490 Hz supports this
+interpretation but is not an independent frequency measurement.
+
+### Setting B Timebase Limitation
+
+For Setting B, the TIME/DIV setting cannot be recovered confidently from the photograph.
+With 2.72 divisions per period:
+
+- 0.5 ms/div would give approximately 735 Hz.
+- 1.0 ms/div would give approximately 368 Hz.
+- Approximately 0.75 ms/div would reproduce 490 Hz, but 0.75 ms/div is not a calibrated
+  setting on this oscilloscope.
+
+The variable timebase control may have been displaced from its calibrated detent, or the
+period may have been miscounted because the screen edges were estimated from a photograph.
+Therefore, no frequency is reported for Setting B.
+
+### Which Quantities Change and Which Remain Fixed?
+
+Duty cycle follows the potentiometer setting: 64% for Setting A and 25% for Setting B.
+This ratio does not depend on the VOLTS/DIV setting or the ×10 probe correction.
+
+The present photographs do not independently demonstrate that period and amplitude remain
+fixed because both VOLTS/DIV and TIME/DIV were changed between the two sessions. The
+measured amplitudes are 1.05 and 2.58 divisions, while the measured periods are 4.13 and
+2.72 divisions. These division counts cannot be compared directly when the scale settings
+are different.
+
+Physically, the PWM period is set by the microcontroller timer, prescaler, and 16 MHz
+clock. `analogWrite()` changes the compare value and therefore changes duty cycle rather
+than the timer frequency. The HIGH and LOW voltage levels should also remain approximately
+fixed. Capturing both potentiometer settings without changing the scope controls would
+demonstrate this directly.
+
+### Why the LED Looks Continuously Lit
+
+At approximately 485 Hz, the LED switches on and off roughly 485 times each second. This
+is approximately an order of magnitude above the common 50–60 Hz flicker-fusion range, so
+the visual system integrates the pulses into a continuous apparent brightness. The
+oscilloscope does not perform this visual integration and therefore displays the
+individual pulses.
+
+Flicker fusion is not one universal frequency. It depends on brightness, contrast,
+peripheral versus central vision, the apparent size of the source, and the observer.
+Therefore, 50–60 Hz should be treated as an approximate reference range rather than a
+universal threshold.
+
+### Precision Through the Signal Chain
+
+`m01_pwm_from_pot` averages 1000 ADC readings and then converts the result to `int` before
+applying `map(..., 0, 1023, 0, 255)`. The additional effective precision obtained through
+averaging cannot survive unchanged in an 8-bit actuator command because the PWM output has
+only 256 command levels.
+
+Precision at the sensor therefore does not automatically become precision at the actuator.
+This is an important instrument-design constraint that will matter when the same signal
+chain controls the TEC.
+
+### What the Oscilloscope Showed That the Serial Displays Did Not
+
+The essential distinction is between a direct electrical measurement of the output pin
+and values selected and printed by software. Serial Monitor and Serial Plotter report
+samples acquired and processed by the sketch at the rate selected by the program. The
+oscilloscope displays the voltage on the wire using its own independent timebase.
+
+The serial displays could not show the approximately 2 ms PWM period because communication
+at 9600 baud, together with program execution and delays, produces reports at only a few
+tens of hertz. This is several orders of magnitude slower than the PWM waveform. The
+serial output also reports the commanded duty value rather than directly measuring the
+waveform produced by the pin.
+
+The oscilloscope resolved the individual pulses, actual HIGH and LOW voltage levels, duty
+cycle, and period. It therefore showed whether the hardware produced the waveform requested
+by the software. The serial output shows what the software believes or commands, whereas
+the oscilloscope shows what the electrical hardware actually produces.
 
 ---
 
-## 6. C1 Question 9 — the Arduino Uno analog input
+## 6. C1 Question 9 — Arduino Uno Analog Input
 
-The Uno's analog input is a successive-approximation ADC that measures a **voltage** — not a
-current, and not a resistance except through a divider that converts resistance to voltage. It
-measures relative to a reference: the input range runs from 0 V to V_ref, nominally the 5 V
-supply, and any input above V_ref simply saturates at the top code.
+The Arduino Uno analog input is a successive-approximation ADC that measures **voltage**.
+It does not directly measure current or resistance, although a voltage-divider circuit can
+convert a resistance into a measurable voltage.
 
-The converter is **10-bit**, so it divides that range into 2¹⁰ = 1024 levels and reports an
-integer code from **0 to 1023**. One count is therefore V_ref/1024 = 5.00 V/1024 ≈ **4.88 mV**,
-which sets the finest voltage difference a single conversion can distinguish.
+The ADC measures relative to a reference voltage. In this experiment, the input range is
+treated as 0–5.00 V. An input at or above the reference saturates at the maximum code.
 
-A conversion takes roughly **100 µs**, giving a maximum sustained rate of about 10 000
-samples per second — although the practical rate in a sketch is usually much lower, because
-`Serial.print` and any `delay()` in the loop dominate. Six input channels (A0–A5) share one
-converter through an analog multiplexer, so channels are sampled in turn rather than
-simultaneously, and switching channels requires the sample-and-hold to settle again.
+The converter is **10-bit**, so it divides the input range into
 
-The datasheet recommends a source impedance of **≤10 kΩ**, because the internal
-sample-and-hold capacitor must charge through whatever impedance the source presents within the
-sampling window. The 100 kΩ divider used here reaches 25 kΩ at midrange and therefore exceeds
-that recommendation — worth noting as a limitation of the assigned circuit rather than a fault
-in the measurement.
+$$
+2^{10}
+=
+1024
+$$
 
-## 7. C1 Question 10 — the Arduino Uno PWM output
+levels and reports integer codes from **0 to 1023**. One count corresponds to
 
-A PWM output is a **digital** pin being switched rapidly between two voltages, ≈0 V and ≈5 V. It
-is driven with `analogWrite(pin, value)` where value runs **0 to 255**, and that value sets the
-**duty cycle** — the fraction of each period the pin spends high — as duty = value/255. The
-switching **frequency** is fixed by the timer hardware: approximately **490 Hz** on pins 3, 9,
-10 and 11, and approximately 980 Hz on pins 5 and 6.
+$$
+\Delta V
+=
+\frac{V_{\mathrm{ref}}}{1024}
+=
+\frac{5.00\ \mathrm{V}}{1024}
+\approx 4.88\ \mathrm{mV}.
+$$
 
-**PWM is not a true analog voltage.** At every instant the pin is at one rail or the other; it
-never rests at an intermediate level. What varies continuously is the *average* over a period,
-and that average only becomes a physical quantity when something integrates it — an RC low-pass
-filter, the thermal mass of a heater, the mechanical inertia of a motor, or the persistence of
-the human eye watching an LED. Measured with an oscilloscope, as in §5, the signal is
-unmistakably a square wave and not a varying DC level; measured with a slow DC voltmeter it
-would read the average and look like one. Which of those two answers is correct depends entirely
-on what the load does with it.
+A conversion takes approximately **100 µs**, giving a maximum conversion rate of about
 
-**A power stage is required to drive a motor or a TEC.** An ATmega328P pin can source only tens
-of milliamps at 5 V — tens of milliwatts — while a TEC or a motor needs amperes from a separate
-supply, several orders of magnitude more. The pin cannot supply that, and connecting it directly
-would destroy it. The H-bridge is the power stage that resolves this: the low-power logic signal
-gates a high-current path from the bench supply through the load, so the microcontroller
-controls the power without carrying it. The bridge topology additionally allows the current to
-be driven in **either direction** through the load, which is essential for a TEC, since
-reversing the current swaps the hot and cold faces and turns a cooler into a heater. That is the
-mechanism by which the controller this course is building will be able to drive temperature in
-both directions from a single actuator.
+$$
+f
+=
+\frac{1}{100\times10^{-6}\ \mathrm{s}}
+=
+10{,}000\ \mathrm{samples/s}.
+$$
+
+The practical reporting rate is usually lower because `Serial.print()` and any `delay()`
+statements add time.
+
+Six analog channels, A0–A5, share one converter through an analog multiplexer. The
+channels are sampled sequentially rather than simultaneously, and the sample-and-hold
+capacitor must settle again after switching channels.
+
+The microcontroller documentation recommends a source impedance of approximately
+**10 kΩ or less** because the internal sample-and-hold capacitor must charge through the
+source impedance during a limited sampling interval. The 100 kΩ potentiometer divider
+used here reaches a Thévenin impedance of 25 kΩ at midrange and therefore exceeds that
+recommendation. This is a limitation of the assigned circuit.
+
+---
+
+## 7. C1 Question 10 — Arduino Uno PWM Output
+
+A PWM output is a **digital** pin that switches rapidly between approximately 0 V and
+5 V. It is controlled using `analogWrite(pin, value)`, where `value` ranges from **0 to
+255**. The command determines the duty cycle:
+
+$$
+D
+=
+\frac{\text{value}}{255}\times100\%.
+$$
+
+The switching frequency is set by the timer hardware. On the Arduino Uno, it is
+approximately **490 Hz** on pins 3, 9, 10, and 11 and approximately 980 Hz on pins 5 and 6.
+
+### PWM Is Not a True Analog Voltage
+
+At each instant, the output pin is at either its LOW or HIGH voltage. It does not remain
+at an intermediate voltage. What changes is the fraction of each period spent HIGH.
+
+The average voltage over a period is approximately
+
+$$
+V_{\mathrm{avg}}
+=
+D V_{\mathrm{HIGH}},
+$$
+
+where $D$ is written as a fraction between 0 and 1.
+
+This average becomes physically meaningful when a load integrates the pulses. Examples
+include an RC low-pass filter, the thermal mass of a heater, the mechanical inertia of a
+motor, or persistence of vision when viewing an LED.
+
+An oscilloscope shows the individual square-wave pulses. A slower DC voltmeter may report
+their average. Both observations describe the same signal at different time resolutions.
+
+### Why a Power Stage Is Required
+
+An ATmega328P output pin can supply only tens of milliamperes at approximately 5 V, which
+corresponds to tens of milliwatts. A motor or TEC may require several amperes from a
+separate supply. Connecting such a load directly to the Arduino pin could damage the
+microcontroller.
+
+An H-bridge serves as the power stage. The low-power Arduino logic signal controls a
+high-current path from the external supply through the load, allowing the microcontroller
+to control the power without carrying the load current directly.
+
+The H-bridge also permits current to flow in either direction through the load. This is
+essential for a TEC because reversing the current exchanges the hot and cold faces. The
+controller can therefore use one actuator for both heating and cooling.
