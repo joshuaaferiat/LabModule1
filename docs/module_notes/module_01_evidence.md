@@ -40,25 +40,25 @@ the graticule and converted using the front-panel settings and ×10 probe factor
 
 The voltage conversion is
 
-$$
+```math
 \Delta V
 =
 (\text{vertical divisions})
 (\text{VOLTS/DIV})
 (10).
-$$
+```
 
 **On the 150 kΩ series resistor.** The assignment specifies 200–4000 Ω, so the resistor
 used here is a departure from the assigned range. With a blue LED having approximately
 $V_f=3.1\ \mathrm{V}$ on a 5.00 V rail, the current is
 
-$$
+```math
 I
 =
 \frac{5.00\ \mathrm{V}-3.1\ \mathrm{V}}
 {150\ \mathrm{k\Omega}}
 \approx 13\ \mu\mathrm{A}.
-$$
+```
 
 This is roughly forty times smaller than the current produced by the largest resistor in
 the assigned range, making the Part 4 brightness change difficult to see by eye. It does
@@ -112,7 +112,7 @@ printed bare integers rather than the `ADC:<n>` format used by the current file.
 
 The one-count voltage step is
 
-$$
+```math
 \Delta V
 =
 \frac{5.00\ \mathrm{V}}{1024}
@@ -120,27 +120,27 @@ $$
 0.0048828\ \mathrm{V}
 =
 4.883\ \mathrm{mV}.
-$$
+```
 
 The maximum reported voltage using the sketch’s `/1024.0` conversion is
 
-$$
+```math
 V_{\max}
 =
 1023\left(\frac{5.00\ \mathrm{V}}{1024}\right)
 =
 4.9951\ \mathrm{V}.
-$$
+```
 
 The lowest observed value corresponds to
 
-$$
+```math
 V_{20}
 =
 20\left(\frac{5.00\ \mathrm{V}}{1024}\right)
 =
 0.09766\ \mathrm{V}.
-$$
+```
 
 ### Why the Readings Occupy Discrete Levels
 
@@ -214,43 +214,43 @@ will calculate the entries in the table after a raw capture is obtained.
 Suppose each conversion has independent random error with standard deviation $\sigma_1$.
 For an average of $N$ independent measurements, the standard deviation of the mean is
 
-$$
+```math
 \sigma_N
 =
 \frac{\sigma_1}{\sqrt{N}}.
-$$
+```
 
 Therefore,
 
-$$
+```math
 \frac{\sigma_N}{\sigma_1}
 =
 \frac{1}{\sqrt{N}}.
-$$
+```
 
 For $N=1000$,
 
-$$
+```math
 \frac{\sigma_{1000}}{\sigma_1}
 =
 \frac{1}{\sqrt{1000}}
 =
 0.0316.
-$$
+```
 
 The ideal number of effective bits gained is
 
-$$
+```math
 \text{bits gained}
 =
 \log_2(\sqrt{N})
 =
 \frac{1}{2}\log_2(N).
-$$
+```
 
 For $N=1000$,
 
-$$
+```math
 \text{bits gained}
 =
 \frac{1}{2}\log_2(1000)
@@ -259,7 +259,7 @@ $$
 =
 4.98
 \approx 5\ \text{bits}.
-$$
+```
 
 Under suitable conditions, averaging can therefore allow a 10-bit ADC to report an
 estimate with approximately 15 bits of effective precision.
@@ -278,15 +278,15 @@ pickup can remain after averaging instead of canceling.
 
 Averaging reduces random scatter around the value reported by the instrument. It does
 not remove systematic error. For example, if the actual reference voltage were 4.93 V
-while the sketch assumed 5.00 V, the fractional calibration error would be
+while the sketch assumed 5.00 V, the fractional calibration difference would be
 
-$$
+```math
 \frac{5.00-4.93}{5.00}\times100\%
 =
 1.4\%.
-$$
+```
 
-No amount of averaging would remove this error. The averaged values could have less
+No amount of averaging would remove this difference. The averaged values could have less
 scatter while remaining systematically incorrect. This is why measuring the reference
 voltage is important and why the unmeasured reference is a limitation of this note.
 
@@ -295,7 +295,7 @@ voltage is important and why the unmeasured reference is a limitation of this no
 The Arduino reference gives approximately 100 µs per `analogRead()` conversion, or about
 10 kSa/s. The calculated time for 1000 readings is therefore
 
-$$
+```math
 t_{1000}
 =
 1000(100\ \mu\mathrm{s})
@@ -303,7 +303,7 @@ t_{1000}
 100{,}000\ \mu\mathrm{s}
 =
 0.10\ \mathrm{s}.
-$$
+```
 
 This does not include arithmetic or Serial output time.
 
@@ -344,25 +344,25 @@ measured.
 
 The calculations use
 
-$$
+```math
 T
 =
 t_{\mathrm{on}}+t_{\mathrm{off}},
-$$
+```
 
-$$
+```math
 f
 =
 \frac{1}{T},
-$$
+```
 
 and
 
-$$
+```math
 D
 =
 \frac{t_{\mathrm{on}}}{T}\times100\%.
-$$
+```
 
 One delay was held at the stock 1000 ms while the other was changed. Therefore, period
 and frequency change between the 1:1 case and the other two cases, in addition to the
@@ -376,11 +376,11 @@ time. The true periods should therefore be slightly longer than 2.000 s and 1.10
 **No oscilloscope figure was obtained for Blink.** At 0.5–0.9 Hz, a single period is
 longer than the BK Precision 2120B’s entire slowest sweep:
 
-$$
+```math
 (0.1\ \mathrm{s/div})(10\ \mathrm{div})
 =
 1.0\ \mathrm{s}.
-$$
+```
 
 At that sweep rate, the CRT spot moves slowly across the screen and the phosphor fades
 before a complete persistent trace forms. The PWM waveform below is approximately three
@@ -426,7 +426,7 @@ check of Figure 4b.
 
 For Setting A,
 
-$$
+```math
 V_{\mathrm{pp},A}
 =
 (1.05\ \mathrm{div})
@@ -434,13 +434,13 @@ V_{\mathrm{pp},A}
 (10)
 =
 5.25\ \mathrm{V}.
-$$
+```
 
 Therefore, the measured HIGH and LOW levels are approximately 5.3 V and 0 V.
 
 For Setting B,
 
-$$
+```math
 V_{\mathrm{pp},B}
 =
 (2.58\ \mathrm{div})
@@ -448,7 +448,7 @@ V_{\mathrm{pp},B}
 (10)
 =
 5.16\ \mathrm{V}.
-$$
+```
 
 Therefore, the measured HIGH and LOW levels are approximately 5.2 V and 0 V.
 
@@ -456,34 +456,34 @@ Therefore, the measured HIGH and LOW levels are approximately 5.2 V and 0 V.
 
 For Setting A,
 
-$$
+```math
 T_A
 =
 (4.13\ \mathrm{div})
 (0.5\ \mathrm{ms/div})
 =
 2.065\ \mathrm{ms}.
-$$
+```
 
 Thus,
 
-$$
+```math
 f_A
 =
 \frac{1}{2.065\times10^{-3}\ \mathrm{s}}
 =
 484.3\ \mathrm{Hz}
 \approx 485\ \mathrm{Hz}.
-$$
+```
 
 Compared with the expected 490 Hz,
 
-$$
+```math
 \text{percentage difference}
 =
 \frac{|485-490|}{490}\times100\%
 \approx 1.0\%.
-$$
+```
 
 Figures 4b and 5b were photographed at different sweep speeds and give consistent periods
 to approximately 0.2%. However, the frequency calculation still depends on identifying
@@ -576,32 +576,32 @@ treated as 0–5.00 V. An input at or above the reference saturates at the maxim
 
 The converter is **10-bit**, so it divides the input range into
 
-$$
+```math
 2^{10}
 =
 1024
-$$
+```
 
 levels and reports integer codes from **0 to 1023**. One count corresponds to
 
-$$
+```math
 \Delta V
 =
 \frac{V_{\mathrm{ref}}}{1024}
 =
 \frac{5.00\ \mathrm{V}}{1024}
 \approx 4.88\ \mathrm{mV}.
-$$
+```
 
 A conversion takes approximately **100 µs**, giving a maximum conversion rate of about
 
-$$
+```math
 f
 =
 \frac{1}{100\times10^{-6}\ \mathrm{s}}
 =
 10{,}000\ \mathrm{samples/s}.
-$$
+```
 
 The practical reporting rate is usually lower because `Serial.print()` and any `delay()`
 statements add time.
@@ -624,11 +624,11 @@ A PWM output is a **digital** pin that switches rapidly between approximately 0 
 5 V. It is controlled using `analogWrite(pin, value)`, where `value` ranges from **0 to
 255**. The command determines the duty cycle:
 
-$$
+```math
 D
 =
 \frac{\text{value}}{255}\times100\%.
-$$
+```
 
 The switching frequency is set by the timer hardware. On the Arduino Uno, it is
 approximately **490 Hz** on pins 3, 9, 10, and 11 and approximately 980 Hz on pins 5 and 6.
@@ -640,11 +640,11 @@ at an intermediate voltage. What changes is the fraction of each period spent HI
 
 The average voltage over a period is approximately
 
-$$
+```math
 V_{\mathrm{avg}}
 =
 D V_{\mathrm{HIGH}},
-$$
+```
 
 where $D$ is written as a fraction between 0 and 1.
 
