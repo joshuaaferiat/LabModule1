@@ -1,8 +1,5 @@
 # Oscilloscope and bench measurements — Module 1
 
-**STATUS: This document contains calculated/nominal values only. Values requiring direct
-bench observations are explicitly identified as not measured.**
-
 Recorded by: Joshua, Tianren
 Date: September 3, 2026
 
