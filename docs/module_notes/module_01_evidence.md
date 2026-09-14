@@ -7,7 +7,7 @@
 | **Assessment code** | A1 (graded team assignment, 5 points) |
 | **Team members** | Aferiat, Joshua; Yin, Tianren S. 
 | **Date** | Sept. 3rd |
-| **Repository URL** | `FILL IN: https://github.com/joshuaaferiat/LabModule1` |
+| **Repository URL** | https://github.com/joshuaaferiat/LabModule1 |
 | **Git checkpoint (GC) commit** | `FILL IN: full 40-character hash` |
 
 > **Safety.** The Arduino was powered by USB only. The TEC power supply remained off for every measurement reported here.
