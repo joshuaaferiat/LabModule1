@@ -8,7 +8,7 @@
 | **Team members** | Aferiat, Joshua; Yin, Tianren S. |
 | **Experiment date** | September 3, 2026 |
 | **Repository URL** | https://github.com/joshuaaferiat/LabModule1 |
-| **Git checkpoint (GC) commit** | 998d6ff3bad6e6117124964ba61bcd182ca60a32 |
+| **Git checkpoint (GC) commit** | d599c5b6628bc05869fed1e465264807e7533028 |
 
 > **Safety.** The Arduino was powered by USB only. The TEC power supply remained off for every measurement reported here.
 >
