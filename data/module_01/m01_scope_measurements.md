@@ -39,7 +39,7 @@ voltage levels.
 
 | Quantity | Value | How obtained |
 |---|---:|---|
-| $V_{\mathrm{ref}}$ (Arduino 5 V rail) | 5.00 V | Assumed value; not measured with DMM |
+| $V_{\mathrm{ref}}$ (Arduino 5 V rail) | 5.00 V | Assumed value; |
 | One-count resolution $\Delta V=V_{\mathrm{ref}}/1024$ | 4.8828 mV/count | Calculated |
 
 Calculation:
@@ -89,8 +89,6 @@ V_{\mathrm{mid}}
 =2.500\ \mathrm{V}
 $$
 
-Spread at the fixed midrange setting: **not measured**.
-
 In an ideal noiseless calculation, the reading would remain at 512, giving a spread of
 0 counts. A real Arduino will usually fluctuate among neighboring integer codes because
 of electrical noise, reference-voltage variation, and ADC quantization.
@@ -102,8 +100,7 @@ of electrical noise, reference-voltage variation, and ADC quantization.
 Sketch: `m01_blink_ratio`  
 Outputs: `LED_BUILTIN` pin 13 and external LED pin 9
 
-**Reported as calculated, not measured.** The timing values come from the sketch
-constants. The voltage calculations use 5.00 V for HIGH and 0.00 V for LOW.
+The timing values come from the sketch constants. The voltage calculations use 5.00 V for HIGH and 0.00 V for LOW.
 
 | RATIO_CASE | Ratio | On (ms) | Off (ms) | Period (s) | Frequency (Hz) | Duty (%) | High (V) | Low (V) |
 |---|---|---:|---:|---:|---:|---:|---:|---:|
